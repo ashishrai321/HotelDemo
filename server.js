@@ -22,10 +22,12 @@ console.log(_.uniq(data));*/
 const express = require("express");
 const app = express();
 const db = require('./db')
+require('dotenv').config();
 
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
+const PORT = process.env.PORT || 3000;
 
 //const Person = require("./models/person");
 //const Menu = require("./models/menu");
@@ -109,4 +111,4 @@ const menuRoutes = require('./routes/menuRoutes');
 app.use('/person', personRoutes);
 app.use('/menu', menuRoutes);
 
-app.listen(2000);
+app.listen(PORT);
