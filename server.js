@@ -24,13 +24,26 @@ const app = express();
 const db = require('./db')
 require('dotenv').config();
 
+const Passport = require('./auth');
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 const PORT = process.env.PORT || 3000;
 
+// Middleware Function
+const logRequest = (req, res, next) => {
+    console.log(new Date().toLocaleString() + ' Request Made to : ' + req.originalUrl);
+    next(); // Move on to next function and it is must for middleware function
+}
+
+app.use(logRequest);
+
 //const Person = require("./models/person");
 //const Menu = require("./models/menu");
+
+app.use(Passport.initialize());
+
+const localAuthMiddleware = Passport.authenticate('local', {session: false});
 
 app.get('/', function(req, res){
     res.send("Helloooooooo, Welcome to my hotel, how can i help u?")
@@ -107,8 +120,10 @@ app.post('/items', (req, res) => {
 
 const personRoutes = require('./routes/personRoutes');
 const menuRoutes = require('./routes/menuRoutes');
+//const Person = require("./models/person");
+const passport = require("passport");
 
-app.use('/person', personRoutes);
+app.use('/person', localAuthMiddleware, personRoutes);
 app.use('/menu', menuRoutes);
 
 app.listen(PORT);
